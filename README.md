@@ -27,7 +27,7 @@ along with implementing third-party OAuth authentication.
 - Insert an application name and save it
 - Select Web application type
 - Insert Authorized JavaScript origins as 'http://localhost:8000'
-- Insert Authorized redirect URIs as 'http://localhost:5000/login' && 'http://localhost:8000/gconnect'
+- Insert Authorized redirect URIs as 'http://localhost:8000/login' && 'http://localhost:8000/gconnect'
 - Select create
 - Copy the Client ID, then paste it into the data-clientid in login.html in GOOGLE PLUS SIGN IN BUTTON section
 - Download JSON from the OAuth 2.0 client IDs
