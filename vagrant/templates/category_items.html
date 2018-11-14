@@ -1,0 +1,56 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div class = 'flash'>
+		      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+</div>
+
+<div class="main_body">
+<div class="main_block">
+	<h2 class="sub_title">Categories</h2>
+{% if  categories !=[] %}
+{% for category in categories %}
+	<a href = "{{url_for('CategoryItems', category_name = category.name)}}">
+	<div><h3>{{category.name}}</h3></div>
+	</a>
+{% endfor %}
+{% else %}
+<p>You currently have no categories</p>
+{% endif %}
+</div>
+
+<div class="item_block">
+<h2 class="sub_title"> {{category_name}} Items</h2>
+<div>
+<div><a href="{{url_for('newCategoryItem', category_name=category_name)}}" class="new_item">Add a new item</a></div>
+<br>
+<a href="{{url_for('editCategory', category_name=category_name)}}" class="edit_item">Edit</a>
+<a href="{{url_for('deleteCategory', category_name=category_name)}}" class="delete_item">Delete</a>
+</div>
+<br>
+<div>
+{% if  category_items != [] %} <!--is not none-->
+{% for item in category_items %}
+	<div class="items"><a href = "{{url_for('showCategoryItem', category_name=category_name, item_name= item.name)}}">
+	<h3>{{item.name}}</h3></a>
+	</div>
+{% endfor %}
+{% else %}
+<!-- don't work!! -->
+<p>You currently have no items in {{category_name}} </p>
+{% endif %}
+</div>
+</div>
+</div>
+{% endblock %}

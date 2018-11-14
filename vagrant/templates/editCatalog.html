@@ -1,0 +1,17 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+	<h1>Edit {{category_name}}</h1>
+	<form action="#" method = "post">
+		<div class="form_sec">
+		<label for="name" class="label_name">Name:</label>
+		<input type ="text" maxlength="50" name="name" placeholder={{category_name}}>
+		</div>
+		<div>
+<!-- 			<input type="submit" name="submit">
+ -->		<button type="submit" class="button" id="submit" type="submit"><span class="glyphicon glyphicon-glass" aria-hidden="true"></span>Edit</button>
+		</div>
+	</form>
+
+
+{% endblock %}

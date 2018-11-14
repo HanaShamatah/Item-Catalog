@@ -1,0 +1,35 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+	<h1>edit {{item.name}} Item</h1>
+	<form action="#" method = "post">
+		<div class="form_sec">
+		<label for="name" class="label_name">Name:</label>
+		<input type ="text" maxlength="50" name="name" placeholder={{item.name}}>
+		</div>
+		<div class="form_sec">
+		<label for="description" class="label_name">Description:</label>
+		<textarea class="form-control" maxlength="250" rows="3" name="description" placeholder={{item.description}}></textarea>
+		</div>
+		<div class="form_sec">
+		<label for="picture" class="label_name">Picture URL:</label>
+		<input type ="text" maxlength="250" name="picture" placeholder="http://wwwimagex.com">
+		</div>
+		<div class="form_sec">
+		<label for="category" class="label_name">Category:</label>
+		<select name=category>
+			{% for category in categories %}
+			<label>
+			<option>{{category.name}}</option>
+			</label>
+			{%endfor%}
+		</select>
+		</div>
+		<div>
+<!-- 			<input type="submit" name="submit">
+ -->		<button type="submit" class="button" id="submit" type="submit"><span class="glyphicon glyphicon-glass" aria-hidden="true"></span>Edit</button>
+		</div>
+	</form>
+
+
+{% endblock %}

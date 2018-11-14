@@ -1,0 +1,48 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div class = 'flash'>
+		      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+
+</div>
+
+<div class="main_body">
+<div class="main_block">
+	<h2 class="sub_title">Categories</h2>
+{% if  categories !=[] %}
+{% for category in categories %}
+	<a href = "{{url_for('CategoryItems', category_name = category.name)}}">
+	<div><h3>{{category.name}}</h3></div>
+	</a>
+{% endfor %}
+{% else %}
+<p>You currently have no categories</p>
+{% endif %}
+</div>
+
+<div class="item_block">
+<h2 class="sub_title"> Latest Items</h2>
+{% if  latest_items !=[] %}
+{% for item in latest_items %}
+	<div class="latest_items"><a href = "{{url_for('showCategoryItem', category_name = item.category_name, item_name = item.name)}}">
+	<h3>{{item.name}}</h3>
+</a></div>
+<div class="item_category">({{item.category_name}})</div>
+<br>
+{% endfor %}
+{% else %}
+<p>You currently have no latest items</p>
+{% endif %}
+</div>
+</div>
+{% endblock %}

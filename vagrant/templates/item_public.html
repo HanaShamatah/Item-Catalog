@@ -1,0 +1,9 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+	<h2 class="item_title">{{item_name}}</h2>
+	<img src="{{ item.picture }}" class="item_img">
+	<div class="item_desc">{{item.description}}</div>
+
+{% endblock %}
