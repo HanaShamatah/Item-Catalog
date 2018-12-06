@@ -1,7 +1,11 @@
 # configuration code__beginning
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import (Column,
+                        ForeignKey,
+                        Integer,
+                        String,
+                        DateTime)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -11,6 +15,9 @@ Base = declarative_base()
 
 
 class User(Base):
+    """
+    Logged in users information will be stored in user table in db
+    """
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
@@ -30,12 +37,15 @@ class User(Base):
 
 
 class Categories(Base):  # Class code
+    """
+    Main categories will be stored in categories table in db
+    """
     __tablename__ = 'categories'
 
     id = Column(Integer, primary_key=True)  # Mapper code
     name = Column(String(250), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    user = relationship("User")
 
     @property
     def serialize(self):
@@ -47,6 +57,9 @@ class Categories(Base):  # Class code
 
 
 class CatalogItem(Base):  # Class code
+    """
+    Items of categories will be stored in catalog_item table in db
+    """
     __tablename__ = 'catalog_item'
 
     name = Column(String(80), nullable=False)  # Mapper code
@@ -55,9 +68,9 @@ class CatalogItem(Base):  # Class code
     description = Column(String(250))
     picture = Column(String(250))
     category_name = Column(String(250), ForeignKey('categories.name'))
-    categories = relationship(Categories)
+    categories = relationship("Categories", cascade="all, delete")
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    user = relationship("User")
 
     @property
     def serialize(self):

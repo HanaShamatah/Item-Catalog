@@ -1,5 +1,10 @@
 # Flask framework imports
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, make_response
+from flask import (Flask,
+                   render_template,
+                   request, redirect,
+                   url_for, jsonify,
+                   flash,
+                   make_response)
 from flask import session as login_session
 
 # Database and SQLAlchemy toolkit imports
@@ -51,7 +56,9 @@ def showLogin():
     if 'username' not in login_session:
         return render_template('login.html', STATE=state)
     else:
-        return "<script>function myFunction() {alert('You are loggedin, please logout and login with another account');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {if(alert(\
+        'You are logged in please logout and login with another account')){}\
+        else window.location='/';}</script><body onload='myFunction()''>"
 
 
 # login with Google
@@ -130,7 +137,8 @@ def gconnect():
     data = answer.json()
 
     login_session['provider'] = 'google'
-    login_session['username'] = data['name']
+    # login_session['username'] = data['name']
+    login_session['username'] = data.get('name', '')
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
@@ -146,7 +154,7 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;">'
+    output += '" style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;">'  # noqa
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
@@ -173,7 +181,7 @@ def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
-    except:
+    except:  # noqa
         return None
 
 
@@ -249,8 +257,7 @@ def fbconnect():
     app_secret = json.loads(
         open('fb_client_secrets.json', 'r').read())['web']['app_secret']
 
-    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (
-        app_id, app_secret, access_token)
+    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (app_id, app_secret, access_token)  # noqa
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
 
@@ -260,7 +267,7 @@ def fbconnect():
     print token
 
     # Connect to Facebook login API
-    url = 'https://graph.facebook.com/v3.2/me?access_token=%s&fields=name,id,email' % token
+    url = 'https://graph.facebook.com/v3.2/me?access_token=%s&fields=name,id,email' % token  # noqa
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]  # API JSON result
     # print "url sent for API access:%s"% url
@@ -277,7 +284,7 @@ def fbconnect():
     login_session['access_token'] = token
 
     # Get user picture
-    url = 'https://graph.facebook.com/v3.2/me/picture?access_token=%s&redirect=0&height=200&width=200' % token
+    url = 'https://graph.facebook.com/v3.2/me/picture?access_token=%s&redirect=0&height=200&width=200' % token  # noqa
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
@@ -297,7 +304,8 @@ def fbconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;\
+    -webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
 
     flash("Now logged in as %s" % login_session['username'])
     return output
@@ -352,9 +360,13 @@ def showCategories():
     latest_items = session.query(CatalogItem).order_by(
         desc(CatalogItem.date)).limit(10)
     if 'username' not in login_session:
-        return render_template('categories_public.html', categories=categories, latest_items=latest_items)
+        return render_template('categories_public.html',
+                               categories=categories,
+                               latest_items=latest_items)
     else:
-        return render_template('categories.html', categories=categories, latest_items=latest_items)
+        return render_template('categories.html',
+                               categories=categories,
+                               latest_items=latest_items)
 
 
 # Category items
@@ -366,10 +378,16 @@ def CategoryItems(category_name):
         category_name=category_name)
     category = session.query(Categories).filter_by(
         name=category_name).one()
-    if 'username' not in login_session or category.user_id != login_session['user_id']:
-        return render_template('category_items_public.html', categories=categories, category_name=category_name, category_items=category_items)
+    if 'username' not in login_session or category.user_id != login_session['user_id']:  # noqa
+        return render_template('category_items_public.html',
+                               categories=categories,
+                               category_name=category_name,
+                               category_items=category_items)
     else:
-        return render_template('category_items.html', categories=categories, category_name=category_name, category_items=category_items)
+        return render_template('category_items.html',
+                               categories=categories,
+                               category_name=category_name,
+                               category_items=category_items)
 
 
 # Item details
@@ -377,10 +395,14 @@ def CategoryItems(category_name):
 def showCategoryItem(category_name, item_name):
     item = session.query(CatalogItem).filter_by(
         name=item_name, category_name=category_name).one()
-    if 'username' not in login_session or item.user_id != login_session['user_id']:
-        return render_template('item_public.html', item=item, item_name=item_name)
+    if 'username' not in login_session or item.user_id != login_session['user_id']:  # noqa
+        return render_template('item_public.html',
+                               item=item,
+                               item_name=item_name)
     else:
-        return render_template('item.html', item=item, item_name=item_name)
+        return render_template('item.html',
+                               item=item,
+                               item_name=item_name)
 
 
 # Create a new catalog
@@ -390,12 +412,18 @@ def newCategory():
         return redirect('/login')
     # POST Method
     if request.method == 'POST':
-        newCatalog = Categories(
-            name=request.form['name'], user_id=login_session['user_id'])
-        session.add(newCatalog)
-        flash('New Catalog %s Successfully added' % newCatalog.name)
-        session.commit()
-        return redirect(url_for('showCategories'))
+        if request.form['name']:
+            newCatalog = Categories(
+                name=request.form['name'], user_id=login_session['user_id'])
+            session.add(newCatalog)
+            flash('New Catalog %s Successfully added' % newCatalog.name)
+            session.commit()
+            return redirect(url_for('showCategories'))
+        else:
+            return "<script>function myFunction() {if(alert(\
+            'You must inserta catalog new to add it')){} else\
+            window.location='/catalog/new';}</script>\
+            <body onload='myFunction()''>"
     else:
         return render_template('newCatalog.html')
 
@@ -409,7 +437,9 @@ def editCategory(category_name):
         return redirect('/login')
     # Check the loggin user is same as a creator
     if editedCatalog.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorized to edit this category. Please create your own catalog in order to edite it.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {if(alert(\
+        'You are not authorized to edit this category. Please create your own catalog in order to edite it.')){}\
+        else window.location='/';}</script><body onload='myFunction()''>"  # noqa
     # POST Method
     if request.method == 'POST':
         if request.form['name']:
@@ -419,7 +449,8 @@ def editCategory(category_name):
         session.commit()
         return redirect(url_for('showCategories'))
     else:
-        return render_template('editCatalog.html', category_name=category_name)
+        return render_template('editCatalog.html',
+                               category_name=category_name)
 
 
 # Delete catalog
@@ -431,7 +462,9 @@ def deleteCategory(category_name):
         return redirect('/login')
     # Check the loggin user is same as a creator
     if catalogToDelete.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorized to delete this item.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {if(alert(\
+        'You are not authorized to delete this item.')){} else \
+        window.location='/';}</script><body onload='myFunction()''>"
     # POST Method
     if request.method == 'POST':
         session.delete(catalogToDelete)
@@ -439,7 +472,8 @@ def deleteCategory(category_name):
         session.commit()
         return redirect(url_for('showCategories'))
     else:
-        return render_template('deleteCatalog.html', category_name=category_name)
+        return render_template('deleteCatalog.html',
+                               category_name=category_name)
 
 
 # Create a new item
@@ -450,28 +484,42 @@ def newCategoryItem(category_name):
     category = session.query(Categories).filter_by(name=category_name).one()
     # Check the loggin user is same as a creator
     if category.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorized to add a new menu item for %s category.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {if(alert(\
+        'You are not authorized to add a new menu item for %s category.')){}\
+        else window.location='/catalog';}</script>\
+        <body onload='myFunction()''>" % category_name
     # POST Method
     if request.method == 'POST':
-        newCatalogItem = CatalogItem(
-            name=request.form['name'],
-            description=request.form['description'],
-            category_name=request.form['category'],
-            user_id=login_session['user_id'], date=datetime.datetime.now(), picture=request.form['picture'])
-        session.add(newCatalogItem)
-        flash('New Catalog Item %s Successfully added' % newCatalogItem.name)
-        session.commit()
+        # check all form fiels are filled to create a new item
+        if request.form['name'] and request.form['description'] and request.form['picture']:  # noqa
+            newCatalogItem = CatalogItem(
+                name=request.form['name'],
+                description=request.form['description'],
+                category_name=request.form['category'],
+                picture=request.form['picture'],
+                user_id=login_session['user_id'],
+                date=datetime.datetime.now())
+            session.add(newCatalogItem)
+            flash('New Catalog Item %s Successfully added' %
+                  newCatalogItem.name)
+            session.commit()
+        else:
+            return "<script>function myFunction() {if(alert(\
+            'You must fill all fields in order to add a new item')){} else\
+            window.location='http://localhost:8000/catalog/%s/new';}\
+            </script><body onload='myFunction()''>" % category_name
         print newCatalogItem.description
         print newCatalogItem.category_name
         print newCatalogItem.name
-        return redirect(url_for('CategoryItems', category_name=newCatalogItem.category_name))
+        return redirect(url_for('CategoryItems',
+                                category_name=newCatalogItem.category_name))
     else:
         categories = session.query(Categories).order_by(asc(Categories.id))
         return render_template('newItem.html', categories=categories)
 
 
 # Edit items
-@app.route('/catalog/<category_name>/<item_name>/edit', methods=['GET', 'POST'])
+@app.route('/catalog/<category_name>/<item_name>/edit', methods=['GET', 'POST'])  # noqa
 def editCategoryItem(category_name, item_name):
     editedCatalogItem = session.query(CatalogItem).filter_by(
         name=item_name, category_name=category_name).one()
@@ -481,7 +529,9 @@ def editCategoryItem(category_name, item_name):
     # print editCategoryItem.user_id
     # Check the loggin user is same as a creator
     if editedCatalogItem.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorized to edit this item. Please create your own catalog in order to edite its items.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {if(alert(\
+        'You are not authorized to edit this item. Please create your own catalog in order to edite its items.')){}\
+        else window.location='/catalog/%s';}</script><body onload='myFunction()''>" % category_name  # noqa
     # POST Method
     if request.method == 'POST':
         if request.form['name']:
@@ -496,15 +546,19 @@ def editCategoryItem(category_name, item_name):
         session.add(editedCatalogItem)
         flash('Catalog Item %s Successfully edited' % editedCatalogItem.name)
         session.commit()
-        return redirect(url_for('showCategoryItem', category_name=editedCatalogItem.category_name, item_name=editedCatalogItem.name))
+        return redirect(url_for('showCategoryItem',
+                                category_name=editedCatalogItem.category_name,
+                                item_name=editedCatalogItem.name))
     else:
         item = session.query(CatalogItem).filter_by(name=item_name).one()
         categories = session.query(Categories).order_by(asc(Categories.id))
-        return render_template('editItem.html', categories=categories, item=item)
+        return render_template('editItem.html',
+                               categories=categories,
+                               item=item)
 
 
-# Delete items
-@app.route('/catalog/<category_name>/<item_name>/delete', methods=['GET', 'POST'])
+# Delete itemss
+@app.route('/catalog/<category_name>/<item_name>/delete', methods=['GET', 'POST'])  # noqa
 def deleteCategoryItem(category_name, item_name):
     itemToDelete = session.query(
         CatalogItem).filter_by(name=item_name).one()
@@ -512,15 +566,19 @@ def deleteCategoryItem(category_name, item_name):
         return redirect('/login')
     # Check the loggin user is same as a creator
     if itemToDelete.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorized to delete this item.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {if(alert('You are not authorized to delete this item.')){}\
+         else window.location='/catalog/%s';}</script><body onload='myFunction()''>" % category_name  # noqa
     # POST Method
     if request.method == 'POST':
         session.delete(itemToDelete)
         flash('Catalog Item %s Successfully deleted' % itemToDelete.name)
         session.commit()
-        return redirect(url_for('CategoryItems', category_name=category_name))
+        return redirect(url_for('CategoryItems',
+                                category_name=category_name))
     else:
-        return render_template('deleteItem.html', item_name=item_name, category_name=category_name)
+        return render_template('deleteItem.html',
+                               item_name=item_name,
+                               category_name=category_name)
 
 
 if __name__ == '__main__':
